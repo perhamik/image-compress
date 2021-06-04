@@ -1,7 +1,7 @@
 {
 	"name": "imagemin",
 	"version": "2.1.0",
-	"description": "Compress SVG, JPG, PNG. Convert to WEBP",
+	"description": "Compress, resize, convert to WEBP your images",
 	"scripts": {
 		"init": "npm install",
 		"build": "gulp build",
