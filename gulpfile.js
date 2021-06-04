@@ -54,7 +54,7 @@ const changeFileName = (output, scale, cb) => {
 
 const resizeImages = async () => {
 	await new Promise((resolve) => {
-		src(`${_path.src}/**/*.${resizeExt}`)
+		src(`${_path.src}/**/*.${_path.resizeExt}`)
 			.pipe(
 				flatMap((file, cb) => {
 					file.scale = _size
