@@ -1,3 +1,4 @@
 */
 package-lock.json
 .prettierignore
+.DS_Store
