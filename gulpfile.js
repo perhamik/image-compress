@@ -5,6 +5,9 @@ const image = require('gulp-image')
 const scaleImages = require('gulp-scale-images')
 const webp = require('gulp-webp')
 
+//const mode = 'dev'
+const mode = 'prod'
+
 const _path = {
 	ext: '{jpg,jpeg,png,svg}',
 	resizeExt: '{jpg,jpeg,png}',
@@ -26,7 +29,7 @@ const _size = {
 	formatOptions: {} // optional, additional format options for sharp engine
 }
 
-const _props = {
+const _propsDefaults = {
 	pngquant: false, //lossy
 	optipng: false, //lossless
 	zopflipng: true, //lossless, slow
@@ -34,8 +37,20 @@ const _props = {
 	mozjpeg: true,
 	gifsicle: true,
 	svgo: true,
-	concurrent: 10, //max parallels tasks
+	concurrent: mode === 'prod' ? 8 : 6, //max parallels tasks
 	quiet: false // defaults to false
+}
+
+const _props = {
+	pngquant: mode === 'prod' ? ['--speed=2', '--quality=65-90', '--force', 256] : false, //lossy
+	optipng: mode === 'prod' ? ['-i 1', '-strip all', '-fix', '-o6', '-force'] : false, //['-i 1', '-strip all', '-fix', '-o7', '-force'], // //lossless
+	zopflipng: mode === 'prod' ? ['-y', '--lossy_8bit', '--lossy_transparent'] : false, //['-y', '--lossy_8bit', '--lossy_transparent'], //lossless, slow
+	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
+	mozjpeg: ['-optimize', '-progressive'],
+	gifsicle: mode === 'prod' ? ['--optimize=3'] : ['--optimize=1'],
+	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
+	concurrent: mode === 'prod' ? 16 : 6, //max parallels tasks
+	quiet: false, // defaults to false
 }
 
 const renderImage = async (srcPath = _path.src, pipeFunc, outPath = _path.out.main) => {
