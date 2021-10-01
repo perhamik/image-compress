@@ -42,7 +42,7 @@ const _propsDefaults = {
 }
 
 const _props = {
-	pngquant: mode === 'prod' ? ['--speed=2', '--quality=65-90', '--force', 256] : false, //lossy
+	pngquant: false, //lossy
 	optipng: mode === 'prod' ? ['-i 1', '-strip all', '-fix', '-o6', '-force'] : false, //['-i 1', '-strip all', '-fix', '-o7', '-force'], // //lossless
 	zopflipng: mode === 'prod' ? ['-y', '--lossy_8bit', '--lossy_transparent'] : false, //['-y', '--lossy_8bit', '--lossy_transparent'], //lossless, slow
 	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
