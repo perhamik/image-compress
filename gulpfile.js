@@ -39,7 +39,7 @@ const _propsDev = {
 	mozjpeg: ['-optimize', '-progressive'],
 	gifsicle: ['--optimize=1'],
 	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-	concurrent: 16, //max parallels tasks
+	concurrent: 10, //max parallels tasks
 	quiet: false, // defaults to false
 }
 
@@ -51,7 +51,7 @@ const _propsProd = {
 	mozjpeg: ['-optimize', '-progressive'],
 	gifsicle: ['--optimize=3'],
 	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-	concurrent: 20, //max parallels tasks
+	concurrent: 7, //max parallels tasks
 	quiet: false, // defaults to false
 }
 
