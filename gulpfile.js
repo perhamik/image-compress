@@ -5,11 +5,13 @@ const image = require('gulp-image')
 const scaleImages = require('gulp-scale-images')
 const webp = require('gulp-webp')
 
-//const mode = 'dev'
-const mode = 'prod'
+const options = {
+	mode: 'dev'	// 'dev' || 'prod'
+}
+
 
 const _path = {
-	ext: '{jpg,jpeg,png,svg}',
+	ext: '{jpg,jpeg,png,svg,gif}',
 	resizeExt: '{jpg,jpeg,png}',
 	src: 'img-src',
 	out: {
@@ -25,31 +27,31 @@ const _size = {
 	withoutEnlargement: true, // optional, default is true
 	fit: 'inside', // optional, default is 'cover', one of ('cover', 'contain', 'fill', 'inside', 'outside')
 	//rotate: true, // optional
-	metadata: true, // copy metadata over?
+	metadata: false, // copy metadata over?
 	formatOptions: {} // optional, additional format options for sharp engine
 }
 
-const _propsDefaults = {
+const _propsDev = {
 	pngquant: false, //lossy
-	optipng: false, //lossless
-	zopflipng: true, //lossless, slow
-	jpegRecompress: false,
-	mozjpeg: true,
-	gifsicle: true,
-	svgo: true,
-	concurrent: mode === 'prod' ? 8 : 6, //max parallels tasks
-	quiet: false // defaults to false
-}
-
-const _props = {
-	pngquant: false, //lossy
-	optipng: mode === 'prod' ? ['-i 1', '-strip all', '-fix', '-o6', '-force'] : false, //['-i 1', '-strip all', '-fix', '-o7', '-force'], // //lossless
-	zopflipng: mode === 'prod' ? ['-y', '--lossy_8bit', '--lossy_transparent'] : false, //['-y', '--lossy_8bit', '--lossy_transparent'], //lossless, slow
+	optipng: ['-i 1', '-strip all', '-verbose', '-o2', '-force'], //lossless
+	zopflipng: false,  //lossless
 	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
 	mozjpeg: ['-optimize', '-progressive'],
-	gifsicle: mode === 'prod' ? ['--optimize=3'] : ['--optimize=1'],
+	gifsicle: ['--optimize=1'],
 	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-	concurrent: mode === 'prod' ? 16 : 6, //max parallels tasks
+	concurrent: 16, //max parallels tasks
+	quiet: false, // defaults to false
+}
+
+const _propsProd = {
+	pngquant: false, //lossy
+	optipng: ['-i 1', '-strip all', '-verbose', '-o7', '-force'] , //lossless
+	zopflipng: ['-y', '-m', '--iterations=30', '--lossy_8bit', '--lossy_transparent'], //lossless
+	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
+	mozjpeg: ['-optimize', '-progressive'],
+	gifsicle: ['--optimize=3'],
+	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
+	concurrent: 20, //max parallels tasks
 	quiet: false, // defaults to false
 }
 
@@ -83,16 +85,29 @@ const resizeImages = async () => {
 }
 
 const toWebp = () => {
-	const src = `${_path.src}/**/*.{jpg,jpeg,png}`
+	const src = `${_path.src}/**/*.${_path.resizeExt}`
 	return renderImage(src, webp(), _path.out.webp)
 }
 
-const optimize = () => {
+const optimize = (mode = options.mode) => {
+	const _props = mode === 'prod' ? _propsProd : _propsDev
 	const src = `${_path.src}/**/*.${_path.ext}`
 	return renderImage(src, image(_props))
+}
+
+const buildDev = (done) => {
+	options.mode = 'dev'
+	optimize('dev').then(() => done())
+}
+
+const buildProd = (done) => {
+	options.mode = 'prod'
+	optimize('prod').then(() => done())
 }
 
 exports.webp = series(toWebp)
 exports.images = series(optimize)
 exports.resize = series(resizeImages)
-exports.build = parallel(this.images, toWebp)
+exports.build = parallel(optimize, toWebp)
+exports.buildDev = buildDev
+exports.buildProd = buildProd

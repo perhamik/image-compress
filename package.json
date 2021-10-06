@@ -1,10 +1,12 @@
 {
 	"name": "imagemin",
-	"version": "2.1.0",
+	"version": "2.1.4",
 	"description": "Compress, resize, convert to WEBP your images",
 	"scripts": {
 		"init": "npm install",
 		"build": "gulp build",
+		"build-dev": "gulp buildDev",
+		"build-prod": "gulp buildProd",
 		"images": "gulp images",
 		"webp": "gulp webp"
 	},
