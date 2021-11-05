@@ -33,11 +33,11 @@ const _size = {
 
 const _propsDev = {
 	pngquant: false, //lossy
-	optipng: ['-i 1', '-strip all', '-verbose', '-o2', '-force'], //lossless
+	optipng: ['-i 1', '-strip all', '-verbose', '-o7', '-force'], //lossless
 	zopflipng: false,  //lossless
 	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
 	mozjpeg: ['-optimize', '-progressive'],
-	gifsicle: ['--optimize=1'],
+	gifsicle: ['--optimize=3'],
 	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
 	concurrent: 10, //max parallels tasks
 	quiet: false, // defaults to false
@@ -46,12 +46,12 @@ const _propsDev = {
 const _propsProd = {
 	pngquant: false, //lossy
 	optipng: ['-i 1', '-strip all', '-verbose', '-o7', '-force'] , //lossless
-	zopflipng: ['-y', '-m', '--iterations=30', '--lossy_8bit', '--lossy_transparent'], //lossless
+	zopflipng: ['-y', '-m', '--iterations=16', '--lossy_8bit', '--lossy_transparent'], //lossless
 	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
 	mozjpeg: ['-optimize', '-progressive'],
 	gifsicle: ['--optimize=3'],
 	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-	concurrent: 7, //max parallels tasks
+	concurrent: 24, //max parallels tasks
 	quiet: false, // defaults to false
 }
 
