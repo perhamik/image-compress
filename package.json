@@ -6,6 +6,7 @@
 		"init": "npm install",
 		"build": "gulp build",
 		"build-dev": "gulp buildDev",
+		"build-stage": "gulp buildStage",
 		"build-prod": "gulp buildProd",
 		"images": "gulp images",
 		"webp": "gulp webp"
@@ -16,6 +17,7 @@
 		"flat-map": "^1.0.0",
 		"gulp": "^4.0.2",
 		"gulp-image": "^6.2.1",
+		"gulp-newer": "^1.4.0",
 		"gulp-scale-images": "^2.1.2",
 		"gulp-webp": "^4.0.1",
 		"path": "^0.12.7"
