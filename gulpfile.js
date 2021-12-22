@@ -8,7 +8,7 @@ const webp = require('gulp-webp')
 
 const options = {
 	mode: 'dev',	// 'dev' || 'stage' || 'prod'
-	tasks: 6
+	tasks: 16
 }
 
 
@@ -35,11 +35,11 @@ const _size = {
 
 const _propsDev = {
 	pngquant: false, //lossy
-	optipng: ['-i 0', '-strip all', '-verbose', '-o1', '-force'], //lossless
+	optipng: ['-i 0', '-strip all', '-verbose', '-force'], //lossless
 	zopflipng: false,  //lossless
 	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
 	mozjpeg: ['-optimize', '-progressive'],
-	gifsicle: ['--optimize=1'],
+	gifsicle: ['--optimize=3'],
 	svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
 	concurrent: options.tasks, //max parallels tasks
 	quiet: false, // defaults to false
@@ -47,8 +47,8 @@ const _propsDev = {
 
 const _propsStage = {
 	pngquant: false, //lossy
-	optipng: ['-i 0', '-strip all', '-verbose', '-force'], //lossless
-	zopflipng: false, //lossless
+	optipng: false, //lossless
+	zopflipng: ['-y', '-m', '--lossy_8bit', '--lossy_transparent'], //lossless
 	jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
 	mozjpeg: ['-optimize', '-progressive'],
 	gifsicle: ['--optimize=3'],
