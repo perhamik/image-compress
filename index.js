@@ -8,11 +8,11 @@ let compress_images = () => {}
 const props = {
   jpg: {
     engine: 'mozjpeg',
-    command: ['-optimize', '-quality', '85'],
+    command: ['-optimize', '-quality', '88'],
   },
   png: {
     engine: 'optipng',
-    command: false,
+    command: ['-o6'],
   },
 
   gif: {
@@ -28,18 +28,16 @@ const handler = (error, completed, statistic) => {
   }
 }
 
-const test = () => {
+const run = () => {
   compress_images(
-    'img/**/*.{jpg,png,svg,gif}',
-    'build/img/',
+    'src/**/*.{jpg,png,svg,gif}',
+    'build/',
     { compress_force: false, statistic: true, autoupdate: false },
     false,
     { jpg: props.jpg },
     { png: props.png },
-    { svg: { engine: 'svgo', command: '--multipass' } },
-    {
-      gif: { engine: 'gifsicle', command: ['--colors', '64', '--use-col=web'] },
-    },
+    { svg: props.svg },
+    { gif: props.gif },
     handler
   )
 }
@@ -51,7 +49,7 @@ const main = async () => {
   } else {
     return
   }
-  test()
+  run()
 }
 
 main()
