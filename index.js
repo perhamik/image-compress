@@ -8,7 +8,7 @@ let compress_images = () => {}
 const props = {
   jpg: {
     engine: 'mozjpeg',
-    command: ['-optimize', '-quality', '88'],
+    command: ['-optimize', '-quality', '95'],
   },
   png: {
     engine: 'optipng',
@@ -30,7 +30,7 @@ const handler = (error, completed, statistic) => {
 
 const run = () => {
   compress_images(
-    'src/**/*.{jpg,png,svg,gif}',
+    'src/**/*.{jpg,JPG,png,svg,gif}',
     'build/',
     { compress_force: false, statistic: true, autoupdate: false },
     false,
