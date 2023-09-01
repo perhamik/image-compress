@@ -1,10 +1,12 @@
-const { src, dest, series, parallel } = require('gulp')
-const flatMap = require('flat-map').default
-const path = require('path')
-const image = require('gulp-image')
-const newer = require('gulp-newer')
-const scaleImages = require('gulp-scale-images')
-const webp = require('gulp-webp')
+import gulp from 'gulp'
+import flatMap from 'flat-map'
+import { basename } from 'path'
+import image from 'gulp-image'
+import newer from 'gulp-newer'
+import scaleImages from 'gulp-scale-images'
+import webp from 'gulp-webp'
+
+const { src, dest, series, parallel } = gulp
 
 const options = {
 	mode: 'dev',	// 'dev' || 'stage' || 'prod'
@@ -13,7 +15,7 @@ const options = {
 
 
 const _path = {
-	ext: '{jpg,jpeg,png,svg,gif}',
+	ext: '{jpg,JPG,jpeg,JPEG,png,svg,gif}',
 	resizeExt: '{jpg,jpeg,png}',
 	src: 'img-src',
 	out: {
@@ -77,7 +79,7 @@ const renderImage = async (srcPath = _path.src, pipeFunc, outPath = _path.out.ma
 
 const changeFileName = (output, scale, cb) => {
 	const fileName = [
-		path.basename(output.path, output.extname), // strip extension
+		basename(output.path, output.extname), // strip extension
 		scale.format || output.extname
 	].join('')
 	cb(null, fileName)
@@ -130,10 +132,14 @@ const buildProd = (done) => {
 	optimize('prod').then(() => done())
 }
 
-exports.webp = series(toWebp)
-exports.images = series(optimize)
-exports.resize = series(resizeImages)
-exports.build = parallel(optimize, toWebp)
-exports.buildDev = buildDev
-exports.buildStage = buildStage
-exports.buildProd = buildProd
+const _webp = series(toWebp)
+export { _webp as webp }
+export const images = series(optimize)
+export const resize = series(resizeImages)
+export const build = parallel(optimize, toWebp)
+const _buildDev = buildDev
+export { _buildDev as buildDev }
+const _buildStage = buildStage
+export { _buildStage as buildStage }
+const _buildProd = buildProd
+export { _buildProd as buildProd }
