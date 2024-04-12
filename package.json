@@ -1,25 +1,21 @@
-{"name": "imagemin",
-"version": "2.2.1",
-"type": "module",
-"description": "Compress, resize, convert to WEBP your images",
-"scripts": {
-  "init": "npm install",
-  "build": "gulp build",
-  "build-dev": "gulp buildDev",
-  "build-stage": "gulp buildStage",
-  "build-prod": "gulp buildProd",
-  "images": "gulp images",
-  "webp": "gulp webp"
-},
-"author": "perhamik",
-"license": "MIT",
-"dependencies": {
-  "flat-map": "^1.0.0",
-  "gulp": "^4.0.2",
-  "gulp-image": "^6.3.1",
-  "gulp-newer": "^1.4.0",
-  "gulp-scale-images": "^3.0.2",
-  "gulp-webp": "^4.0.1",
-  "path": "^0.12.7"
-}
+{
+  "name": "imagemin",
+  "version": "3.0.0",
+  "type": "module",
+  "description": "Compress, resize, convert to WEBP your images",
+  "scripts": {
+    "build": "gulp build",
+    "webp": "gulp toWebp"
+  },
+  "author": "perhamik",
+  "license": "MIT",
+  "dependencies": {
+    "flat-map": "^1.0.0",
+    "gulp": "^4.0.2",
+    "gulp-image": "^6.3.1",
+    "gulp-newer": "^1.4.0",
+    "gulp-scale-images": "^3.0.2",
+    "gulp-webp": "^4.0.1",
+    "path": "^0.12.7"
+  }
 }

@@ -6,11 +6,11 @@ import newer from 'gulp-newer'
 import scaleImages from 'gulp-scale-images'
 import webp from 'gulp-webp'
 
-const { src, dest, series, parallel } = gulp
+const { src, dest } = gulp
 
 const options = {
   mode: 'dev', // 'dev' || 'stage' || 'prod'
-  tasks: 16,
+  tasks: 8,
 }
 
 const _path = {
@@ -42,7 +42,7 @@ const _propsDev = {
   mozjpeg: ['-optimize', '-progressive'],
   gifsicle: ['--optimize=3'],
   svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-  concurrent: options.tasks, //max parallels tasks
+  concurrent: 24, //max parallels tasks
   quiet: false, // defaults to false
 }
 
@@ -54,7 +54,7 @@ const _propsStage = {
   mozjpeg: ['-optimize', '-progressive'],
   gifsicle: ['--optimize=3'],
   svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-  concurrent: options.tasks, //max parallels tasks
+  concurrent: 16, //max parallels tasks
   quiet: false, // defaults to false
 }
 
@@ -66,7 +66,7 @@ const _propsProd = {
   mozjpeg: ['-optimize', '-progressive'],
   gifsicle: ['--optimize=3'],
   svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-  concurrent: options.tasks, //max parallels tasks
+  concurrent: 12, //max parallels tasks
   quiet: false, // defaults to false
 }
 
@@ -92,7 +92,7 @@ const changeFileName = (output, scale, cb) => {
   cb(null, fileName)
 }
 
-const resizeImages = async () => {
+export const resizeImages = async () => {
   await new Promise((resolve) => {
     src(`${_path.src}/**/*.${_path.resizeExt}`)
       .pipe(
@@ -107,15 +107,21 @@ const resizeImages = async () => {
   })
 }
 
-const toWebp = () => {
+export const toWebp = () => {
   const src = `${_path.src}/**/*.${_path.resizeExt}`
   return renderImage(src, webp(), _path.out.webp)
 }
 
 const _getProps = (mode = options.mode) => {
-  if (mode === 'prod') return _propsProd
-  else if (mode === 'stage') return _propsStage
-  else return _propsDev
+  switch (mode) {
+    case 'prod':
+      return _propsProd
+    case 'stage':
+      return _propsStage
+    case 'dev':
+    default:
+      return _propsDev
+  }
 }
 
 const optimize = (mode = options.mode) => {
@@ -124,29 +130,33 @@ const optimize = (mode = options.mode) => {
   return renderImage(src, image(_props))
 }
 
-const buildDev = (done) => {
-  options.mode = 'dev'
-  optimize('dev').then(() => done())
-}
+export const build = (done) => {
+  const args = process.argv.splice(3, process.argv.length - 3)
+  const concurrentArg = args
+    .find((item) => item.includes('concurrent'))
+    ?.split('=')
+    ?.at(1)
+  const modeArg = args
+    .find((item) => item.includes('mode'))
+    ?.split('=')
+    ?.at(1)
+  options.tasks = !isNaN(parseInt(concurrentArg))
+    ? parseInt(concurrentArg)
+    : options.tasks
 
-const buildStage = (done) => {
-  options.mode = 'stage'
-  optimize('stage').then(() => done())
-}
+  switch (modeArg) {
+    case 'prod':
+    case 'stage':
+    case 'dev':
+      options.mode = modeArg
+      break
 
-const buildProd = (done) => {
-  options.mode = 'prod'
-  optimize('prod').then(() => done())
-}
+    default:
+      options.mode = 'dev'
+      break
+  }
 
-const _webp = series(toWebp)
-export { _webp as webp }
-export const images = series(optimize)
-export const resize = series(resizeImages)
-export const build = parallel(optimize, toWebp)
-const _buildDev = buildDev
-export { _buildDev as buildDev }
-const _buildStage = buildStage
-export { _buildStage as buildStage }
-const _buildProd = buildProd
-export { _buildProd as buildProd }
+  console.log(`MODE: ${options.mode}`)
+  console.log(`Concurrent: ${options.tasks}`)
+  optimize(options.mode).then(() => done())
+}
