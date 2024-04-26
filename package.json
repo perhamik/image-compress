@@ -1,6 +1,6 @@
 {
   "name": "imagemin",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "type": "module",
   "description": "Compress, resize, convert to WEBP your images",
   "scripts": {
@@ -14,7 +14,7 @@
     "gulp": "^4.0.2",
     "gulp-image": "^6.3.1",
     "gulp-newer": "^1.4.0",
-    "gulp-scale-images": "^3.0.2",
+    "gulp-scale-images": "^3.0.3",
     "gulp-webp": "^4.0.1",
     "path": "^0.12.7"
   }

@@ -10,7 +10,7 @@ const { src, dest } = gulp
 
 const options = {
   mode: 'dev', // 'dev' || 'stage' || 'prod'
-  tasks: 8,
+  tasks: 4,
 }
 
 const _path = {
@@ -38,36 +38,16 @@ const _propsDev = {
   pngquant: false, //lossy
   optipng: ['-i 0', '-strip all', '-verbose', '-force'], //lossless
   zopflipng: false, //lossless
-  jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
   mozjpeg: ['-optimize', '-progressive'],
+  jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
   gifsicle: ['--optimize=3'],
   svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-  concurrent: 24, //max parallels tasks
   quiet: false, // defaults to false
 }
 
 const _propsStage = {
-  pngquant: false, //lossy
-  optipng: false, //lossless
+  ..._propsDev,
   zopflipng: ['-y', '-m', '--lossy_8bit', '--lossy_transparent'], //lossless
-  jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
-  mozjpeg: ['-optimize', '-progressive'],
-  gifsicle: ['--optimize=3'],
-  svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-  concurrent: 16, //max parallels tasks
-  quiet: false, // defaults to false
-}
-
-const _propsProd = {
-  pngquant: false, //lossy
-  optipng: ['-i 0', '-strip all', '-verbose', '-force'], //lossless
-  zopflipng: ['-y', '-m', '--lossy_8bit', '--lossy_transparent'], //lossless
-  jpegRecompress: false, //['--strip', '--quality', 'high', '--min', 70, '--max', 90],
-  mozjpeg: ['-optimize', '-progressive'],
-  gifsicle: ['--optimize=3'],
-  svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors'],
-  concurrent: 12, //max parallels tasks
-  quiet: false, // defaults to false
 }
 
 const renderImage = async (
@@ -114,8 +94,6 @@ export const toWebp = () => {
 
 const _getProps = (mode = options.mode) => {
   switch (mode) {
-    case 'prod':
-      return _propsProd
     case 'stage':
       return _propsStage
     case 'dev':
@@ -124,8 +102,12 @@ const _getProps = (mode = options.mode) => {
   }
 }
 
-const optimize = (mode = options.mode) => {
-  const _props = _getProps(mode)
+const optimize = (options) => {
+  const { mode, tasks } = options
+  const _props = {
+    concurrent: tasks,
+    ..._getProps(mode),
+  }
   const src = `${_path.src}/**/*.${_path.ext}`
   return renderImage(src, image(_props))
 }
@@ -145,7 +127,6 @@ export const build = (done) => {
     : options.tasks
 
   switch (modeArg) {
-    case 'prod':
     case 'stage':
     case 'dev':
       options.mode = modeArg
@@ -158,5 +139,5 @@ export const build = (done) => {
 
   console.log(`MODE: ${options.mode}`)
   console.log(`Concurrent: ${options.tasks}`)
-  optimize(options.mode).then(() => done())
+  optimize(options).then(() => done())
 }
