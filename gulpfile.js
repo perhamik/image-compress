@@ -9,8 +9,8 @@ import webp from 'gulp-webp'
 const { src, dest } = gulp
 
 const options = {
-  mode: 'dev', // 'dev' || 'stage' || 'prod'
-  tasks: 4,
+  mode: 'dev', // 'dev' || 'stage'
+  concurrent: 6,
 }
 
 const _path = {
@@ -103,10 +103,11 @@ const _getProps = (mode = options.mode) => {
 }
 
 const optimize = (options) => {
-  const { mode, tasks } = options
+  const { mode, concurrent } = options
+  const modeProps = _getProps(mode)
   const _props = {
-    concurrent: tasks,
-    ..._getProps(mode),
+    ...modeProps,
+    concurrent,
   }
   const src = `${_path.src}/**/*.${_path.ext}`
   return renderImage(src, image(_props))
@@ -122,9 +123,9 @@ export const build = (done) => {
     .find((item) => item.includes('mode'))
     ?.split('=')
     ?.at(1)
-  options.tasks = !isNaN(parseInt(concurrentArg))
+  options.concurrent = !isNaN(parseInt(concurrentArg))
     ? parseInt(concurrentArg)
-    : options.tasks
+    : options.concurrent
 
   switch (modeArg) {
     case 'stage':
@@ -137,7 +138,6 @@ export const build = (done) => {
       break
   }
 
-  console.log(`MODE: ${options.mode}`)
-  console.log(`Concurrent: ${options.tasks}`)
+  console.dir(options)
   optimize(options).then(() => done())
 }
