@@ -1,16 +1,13 @@
 import gulp from 'gulp'
-import flatMap from 'flat-map'
-import { basename } from 'path'
 import image from 'gulp-image'
 import newer from 'gulp-newer'
-import scaleImages from 'gulp-scale-images'
 import webp from 'gulp-webp'
 
 const { src, dest } = gulp
 
 const options = {
   mode: 'dev', // 'dev' || 'stage'
-  concurrent: 6,
+  concurrent: 4,
 }
 
 const _path = {
@@ -22,16 +19,6 @@ const _path = {
     webp: 'webp',
     resize: 'resize',
   },
-}
-
-const _size = {
-  maxWidth: 1920, // optional maximum width
-  maxHeight: 1080, // optional maximum height
-  withoutEnlargement: true, // optional, default is true
-  fit: 'inside', // optional, default is 'cover', one of ('cover', 'contain', 'fill', 'inside', 'outside')
-  //rotate: true, // optional
-  metadata: false, // copy metadata over?
-  formatOptions: {}, // optional, additional format options for sharp engine
 }
 
 const _propsDev = {
@@ -60,29 +47,6 @@ const renderImage = async (
       .pipe(newer(outPath))
       .pipe(pipeFunc)
       .pipe(dest(outPath))
-      .on('end', resolve)
-  })
-}
-
-const changeFileName = (output, scale, cb) => {
-  const fileName = [
-    basename(output.path, output.extname), // strip extension
-    scale.format || output.extname,
-  ].join('')
-  cb(null, fileName)
-}
-
-export const resizeImages = async () => {
-  await new Promise((resolve) => {
-    src(`${_path.src}/**/*.${_path.resizeExt}`)
-      .pipe(
-        flatMap((file, cb) => {
-          file.scale = _size
-          cb(null, file)
-        })
-      )
-      .pipe(scaleImages(changeFileName))
-      .pipe(dest(_path.out.resize))
       .on('end', resolve)
   })
 }

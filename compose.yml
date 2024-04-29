@@ -1,0 +1,8 @@
+name: image-compress
+
+services:
+  main: 
+    build: .
+    volumes:
+      - ./img:/app/img
+      - ./img-src:/app/img-src
